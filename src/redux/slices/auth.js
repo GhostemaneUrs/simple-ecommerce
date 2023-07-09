@@ -39,7 +39,7 @@ export const logout = () => async dispatch => {
   }
 }
 
-export const signIn = (email, password) => async dispatch => {
+export const signIn = (email, password, callback) => async dispatch => {
   try {
     dispatch(setLoading(true))
     const currentUser = await signInWithEmailAndPassword(auth, email, password)
@@ -52,18 +52,36 @@ export const signIn = (email, password) => async dispatch => {
     }
     const { user } = currentUser
     getUser(user.uid).then(res => {
+      console.log('🚀 ~ file: auth.js:56 ~ getUser ~ res:', res)
       if (res) {
         dispatch(setCredentials(res))
       }
     })
     dispatch(setLoading(false))
+    if (callback) callback()
   } catch (error) {
-    console.log(error)
+    if (error.code === 'auth/wrong-password') {
+      Swal.fire({
+        timer: 1500,
+        icon: 'error',
+        title: 'Oops...',
+        showConfirmButton: false,
+        text: 'Incorrect email address or password'
+      })
+    } else {
+      Swal.fire({
+        timer: 1500,
+        icon: 'error',
+        title: 'Oops...',
+        showConfirmButton: false,
+        text: 'Could not log in, try again'
+      })
+    }
     dispatch(setLoading(false))
   }
 }
 
-export const signUp = (email, password) => async dispatch => {
+export const signUp = (email, password, callback) => async dispatch => {
   try {
     dispatch(setLoading(true))
     const newUser = await createUserWithEmailAndPassword(auth, email, password)
@@ -77,13 +95,55 @@ export const signUp = (email, password) => async dispatch => {
     const { user } = newUser
     saveUser({
       uid: user.uid
-    }).then(() => {
-      console.log('User saved')
     })
+    dispatch(setLoading(false))
+    if (callback) callback()
   } catch (error) {
-    console.log(error)
+    if (error.code === 'auth/email-already-in-use') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        showConfirmButton: false,
+        text: 'E-mail is already in use'
+      })
+    } else {
+      Swal.fire({
+        timer: 1500,
+        icon: 'error',
+        title: 'Oops...',
+        showConfirmButton: false,
+        text: 'User could not be created'
+      })
+    }
     dispatch(setLoading(false))
   }
 }
+
+// export const signUp = (email, password) => {
+//   return dispatch => {
+//     dispatch(setLoading(true))
+//     console.log(
+//       '🚀 ~ file: auth.js:100 ~ signUp ~ email, password',
+//       email,
+//       password
+//     )
+//     return new Promise((resolve, reject) => {
+//       const newUser = createUserWithEmailAndPassword(auth, email, password)
+//       if (!newUser) {
+//         return Swal.fire({
+//           icon: 'error',
+//           title: 'Oops...',
+//           text: 'Something went wrong!'
+//         })
+//       }
+//       const { user } = newUser
+//       saveUser({
+//         uid: user.uid
+//       }).then(() => {
+//         console.log('User saved')
+//       })
+//     })
+//   }
+// }
 
 export default authSlice.reducer
