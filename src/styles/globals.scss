@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
+body {
+  margin: 0px;
+  padding: 0px;
+  background-color: #f6f7fb;
+  font-family: 'Nunito', sans-serif;
+}
+
+.container-1440 {
+  width: 100%;
+  padding: 1rem;
+  margin: 0 auto;
+  max-width: 1440px;
+}
+
+.errors-formik {
+  font-size: 15px;
+  color: rgb(255 120 133 / 1);
+  padding-left: 2px;
+}
