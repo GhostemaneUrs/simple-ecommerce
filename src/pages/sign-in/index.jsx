@@ -1,14 +1,15 @@
 import * as yup from 'yup'
-import Swal from 'sweetalert2'
 import Lottie from 'lottie-react'
 import { useFormik } from 'formik'
 import styles from './styles.module.scss'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { signIn } from '../../redux/slices/auth'
-import { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import ecommerce from '../../assets/lotties/ecommerce.json'
 
 const SignIn = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const [isValid, setIsValid] = useState(true)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -35,32 +36,12 @@ const SignIn = () => {
     validationSchema: validateSchema,
     validate: values => validateValues(values, 'remember'),
     onSubmit: async (values, { resetForm }) => {
-      console.log(values)
-      resetForm()
-      await signIn(values.email, values.password)
-        .then(() => {
+      dispatch(
+        signIn(values.email, values.password, () => {
           resetForm()
           navigate('/ecommerce')
         })
-        .catch(error => {
-          if (error.code === 'auth/wrong-password') {
-            Swal.fire({
-              timer: 1500,
-              icon: 'error',
-              title: 'Oops...',
-              showConfirmButton: false,
-              text: 'Incorrect e-mail or password'
-            })
-          } else {
-            Swal.fire({
-              timer: 1500,
-              icon: 'error',
-              title: 'Oops...',
-              showConfirmButton: false,
-              text: 'Could not sign in, try again'
-            })
-          }
-        })
+      )
     }
   })
 
@@ -131,7 +112,12 @@ const SignIn = () => {
                   person
                 </span>
                 {formik.touched.email && formik.errors.email && (
-                  <span className='errors-formik'>{formik.errors?.email}</span>
+                  <span
+                    className='errors-formik'
+                    data-testid='error-message-email'
+                  >
+                    {formik.errors?.email}
+                  </span>
                 )}
               </div>
               <div className={styles.container_relative}>
@@ -196,7 +182,7 @@ const SignIn = () => {
                   isValid && styles.isValid
                 }`}
               >
-                Sign in
+                Sign In
               </button>
             </form>
           </div>
