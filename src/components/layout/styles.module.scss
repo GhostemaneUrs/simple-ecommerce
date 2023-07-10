@@ -1,0 +1,11 @@
+.container_layout {
+  width: 100%;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.container_main {
+  display: flex;
+  flex: 1 0 auto;
+}

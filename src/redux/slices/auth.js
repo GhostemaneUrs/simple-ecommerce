@@ -52,13 +52,12 @@ export const signIn = (email, password, callback) => async dispatch => {
     }
     const { user } = currentUser
     getUser(user.uid).then(res => {
-      console.log('🚀 ~ file: auth.js:56 ~ getUser ~ res:', res)
       if (res) {
         dispatch(setCredentials(res))
       }
     })
-    dispatch(setLoading(false))
     if (callback) callback()
+    dispatch(setLoading(false))
   } catch (error) {
     if (error.code === 'auth/wrong-password') {
       Swal.fire({
@@ -118,32 +117,5 @@ export const signUp = (email, password, callback) => async dispatch => {
     dispatch(setLoading(false))
   }
 }
-
-// export const signUp = (email, password) => {
-//   return dispatch => {
-//     dispatch(setLoading(true))
-//     console.log(
-//       '🚀 ~ file: auth.js:100 ~ signUp ~ email, password',
-//       email,
-//       password
-//     )
-//     return new Promise((resolve, reject) => {
-//       const newUser = createUserWithEmailAndPassword(auth, email, password)
-//       if (!newUser) {
-//         return Swal.fire({
-//           icon: 'error',
-//           title: 'Oops...',
-//           text: 'Something went wrong!'
-//         })
-//       }
-//       const { user } = newUser
-//       saveUser({
-//         uid: user.uid
-//       }).then(() => {
-//         console.log('User saved')
-//       })
-//     })
-//   }
-// }
 
 export default authSlice.reducer
